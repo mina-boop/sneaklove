@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
 
-mongoose.connect(process.env.FAKE_URI, {
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost/sneakerlove";
+
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  useUnifiedTopology: true,
 });
 
-mongoose.connection.on("connected", () => console.log("yay mongodb connected :)"));
+mongoose.connection.on("connected", () =>
+  console.log("yay mongodb connected :)")
+);
 
-mongoose.connection.on("error", () => console.log("nay db connexion error sorry :("));
-
+mongoose.connection.on("error", () =>
+  console.log("nay db connexion error sorry :(")
+);

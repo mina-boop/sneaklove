@@ -1,10 +1,17 @@
+const User = require("../models/User");
+
 module.exports = (req, res, next) => {
-  req.session.currentUser = {
-    _id: "5ec3aaa1dda5ba14c2c72fe8",
-    username: "demo-admin",
-    avatar: "https://cdn.onlinewebfonts.com/img_258083.png",
-    role: "admin",
-    email: "admin@shop-sp4.com",
-  };
-  next();
+  User.findOne() //  find the first user in the database and set him as currentUser (used for dev purposes)
+    .then((oneUser) => {
+      req.session.currentUser = {
+        _id: oneUser._id,
+        role: oneUser.role,
+        avatar: oneUser.avatar,
+        username: oneUser.username,
+      };
+      next();
+    })
+    .catch(() => {
+      next();
+    });
 };

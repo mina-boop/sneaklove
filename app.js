@@ -9,9 +9,8 @@ const createError = require("http-errors");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
 const hbo = require("hbs");
-const mongoose = require("mongoose");
 const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
+const MongoStore = require("connect-mongo");
 const dev_mode = false;
 const logger = require("morgan");
 
@@ -32,10 +31,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     cookie: { maxAge: 60000 }, // in millisec
-    store: new MongoStore({
-      mongooseConnection: mongoose.connection,
-      ttl: 24 * 60 * 60, // 1 day
-    }),
+    store: MongoStore.create({ mongoUrl: process.env.MOGO_URL }),
     saveUninitialized: true,
     resave: true,
   })
@@ -49,12 +45,12 @@ app.use(flash());
 // CUSTOM MIDDLEWARES
 
 if (dev_mode === true) {
-  app.use(require("./middlewares/devMode")); // active le mode dev pour éviter les deconnexions
+  app.use(require("./middlewares/devMode")); // activate dev mode
   app.use(require("./middlewares/debugSessionInfos")); // affiche le contenu de la session
 }
 
-app.use(require("./middlewares/exposeLoginStatus")); // expose le status de connexion aux templates
-app.use(require("./middlewares/exposeFlashMessage")); // affiche les messages dans le template
+app.use(require("./middlewares/exposeLoginStatus")); // expose login status to the views
+app.use(require("./middlewares/exposeFlashMessage")); // expose flash messages to views
 
 // routers
 app.use("/", require("./routes/index"));

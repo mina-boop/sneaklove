@@ -1,4 +1,5 @@
 const express = require("express");
+const Sneaker = require("../models/Sneaker");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -6,7 +7,12 @@ router.get("/", (req, res) => {
 });
 
 router.get("/sneakers/:cat", (req, res) => {
-  res.render("products.hbs");
+  Sneaker.find()
+    .then((sneaker) => {
+      // console.log(sneaker);
+      res.render("products.hbs", { sneakers: sneaker });
+    })
+    .catch();
 });
 
 router.get("/one-product/:id", (req, res) => {
